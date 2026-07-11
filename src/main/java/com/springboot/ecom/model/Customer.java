@@ -17,4 +17,5 @@ public class Customer {
     @Column(nullable = false)
    private  String name;
      private String city;
+     private boolean is_active;
 }

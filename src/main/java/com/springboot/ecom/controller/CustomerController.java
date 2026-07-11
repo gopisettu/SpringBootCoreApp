@@ -1,5 +1,6 @@
 package com.springboot.ecom.controller;
 
+import com.springboot.ecom.dto.CustomeResDto;
 import com.springboot.ecom.dto.CustomerDto;
 import com.springboot.ecom.model.Customer;
 import com.springboot.ecom.service.CustomerService;
@@ -41,21 +42,32 @@ public class CustomerController {
         return customerService.add(dto);
 
     }
-    @GetMapping
-    public void getAll(){
+//    @GetMapping("/get-all")
+//    public List<CustomeResDto> getAll(){
+//        return customerService.getAll();
+//    }
+
+
+        @GetMapping("/get-all")
+    public List<CustomeResDto> getAll(@RequestParam Integer page,@RequestParam Integer size){
+        return customerService.getAll(page,size);
+    }
+
+    @GetMapping("/get-oneById/{id}")
+    public Customer getAllById(@PathVariable long id){
+        return customerService.getAllById(id);
 
     }
-    @GetMapping
-    public void getAllById(){
+
+        @DeleteMapping("/delete-byId/{id}")
+    public  void delete(@PathVariable long id){
+         customerService.delete(id);
 
     }
-    @PutMapping
-    public  void update(){
+//    @PutMapping
+//    public  void update(){
+//
+//    }
 
-    }
-    @DeleteMapping
-    public  void delete(){
-
-    }
 
 }
