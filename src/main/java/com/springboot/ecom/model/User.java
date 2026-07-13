@@ -1,8 +1,8 @@
 package com.springboot.ecom.model;
 
+import com.springboot.ecom.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 @Entity
 @Getter
@@ -10,15 +10,14 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Customer {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private  long id;
+    private long id;
+    @Column(nullable = false,unique = true)
+    private String username;
     @Column(nullable = false)
-   private  String name;
-     private String city;
-     private boolean is_active;
-     @OneToOne
-     @JoinColumn(name = "user_id")
-     private User user;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
