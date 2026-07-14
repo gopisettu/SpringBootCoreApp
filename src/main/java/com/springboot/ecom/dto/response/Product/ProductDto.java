@@ -1,4 +1,4 @@
-package com.springboot.ecom.dto.Product;
+package com.springboot.ecom.dto.response.Product;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;

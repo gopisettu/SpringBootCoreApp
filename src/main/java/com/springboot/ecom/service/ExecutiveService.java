@@ -1,6 +1,7 @@
 package com.springboot.ecom.service;
 
 import com.springboot.ecom.dto.Executive.ExecutiveUserDto;
+import com.springboot.ecom.dto.response.ExecutiveResDtoByJobTitle;
 import com.springboot.ecom.enums.JobTitle;
 import com.springboot.ecom.enums.Role;
 import com.springboot.ecom.mapper.ExecutiveMapper;
@@ -9,9 +10,10 @@ import com.springboot.ecom.model.Executive;
 import com.springboot.ecom.model.User;
 import com.springboot.ecom.repository.ExecutiveRepository;
 import com.springboot.ecom.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +55,10 @@ user.setRole(role);
         Executive executive=ExecutiveMapper.mapDtoToEntiry(executiveUserDto.jobTitle(),executiveUserDto.name());
         executive.setUser(user);
         executiveRepository.save(executive);
+    }
+
+
+    public List<ExecutiveResDtoByJobTitle> getByJobTitle(JobTitle jobTitle) {
+        return executiveRepository.getByJobTitle(jobTitle);
     }
 }
