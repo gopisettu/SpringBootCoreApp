@@ -1,5 +1,6 @@
 package com.springboot.ecom.controller;
 
+import com.springboot.ecom.dto.response.Product.ProductCountResDto;
 import com.springboot.ecom.dto.response.Product.ProductDto;
 import com.springboot.ecom.dto.response.Product.ProductResByTitleSearch;
 import com.springboot.ecom.dto.response.Product.ProductResDto;
@@ -35,6 +36,11 @@ public class ProductController {
     @GetMapping("/get-ByTitle")
     public  List<ProductResByTitleSearch> getByTitle(@RequestParam String title){
         return productService.getByTitle(title);
+    }
+
+    @GetMapping("/getProdutCountBySeller/{sellerId}")
+    public ProductCountResDto getProductBySeller(@PathVariable int sellerId){
+        return productService.getProductBySeller(sellerId);
     }
 
 

@@ -1,5 +1,6 @@
 package com.springboot.ecom.repository;
 
+import com.springboot.ecom.dto.response.Product.ProductCountResDto;
 import com.springboot.ecom.dto.response.Product.ProductResByTitleSearch;
 import com.springboot.ecom.model.Product;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,13 @@ public interface ProductRepository  extends JpaRepository<Product,Long> {
     List<Product> getAllProductsByCategoryIdPageable(int categoryId, Pageable pageabl);
 //    Select p from Product p where p.title=?1;
     List<ProductResByTitleSearch> getByTitle(String title);
-
-
-
+    @Query("""
+SELECT s.name AS name,
+       COUNT(p) AS number_of_product
+FROM Product p
+JOIN p.seller s
+WHERE s.id = ?1
+GROUP BY s.name
+""")
+    ProductCountResDto getProductBySeller(int sellerId);
 }

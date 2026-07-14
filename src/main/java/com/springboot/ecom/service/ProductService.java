@@ -1,5 +1,6 @@
 package com.springboot.ecom.service;
 
+import com.springboot.ecom.dto.response.Product.ProductCountResDto;
 import com.springboot.ecom.dto.response.Product.ProductDto;
 import com.springboot.ecom.dto.response.Product.ProductResByTitleSearch;
 import com.springboot.ecom.dto.response.Product.ProductResDto;
@@ -55,5 +56,9 @@ public class ProductService {
     public List<ProductResByTitleSearch> getByTitle(String title) {
         return  productRepository.getByTitle(title);
 
+    }
+
+    public ProductCountResDto getProductBySeller(int sellerId) {
+        return productRepository.getProductBySeller(sellerId);
     }
 }
