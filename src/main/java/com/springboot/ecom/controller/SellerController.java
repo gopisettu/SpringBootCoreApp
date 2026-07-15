@@ -28,6 +28,9 @@ public class SellerController {
     public void insertSellerByExecutive(@PathVariable long executiveId, @RequestBody SellerDto sellerDto)
     {
         sellerService.addSellerByExecutive(executiveId,sellerDto);
-
+    }
+    @DeleteMapping("/de-activateSeller")
+    public void deActivateSeller(@RequestParam String username){
+        sellerService.deActivateSeller(username);
     }
 }

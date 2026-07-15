@@ -19,6 +19,7 @@ public class Product {
     @Column(length=2000)
     private String description;
     private double price;
+    private int stockCount;
     @ManyToOne
     @JoinColumn(name="seller_id",nullable = false)
     private  Seller seller;

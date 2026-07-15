@@ -6,14 +6,14 @@ import com.springboot.ecom.exception.ResourseNotFoundException;
 import com.springboot.ecom.mapper.ExecutiveMapper;
 import com.springboot.ecom.mapper.UserMapper;
 import com.springboot.ecom.model.Executive;
+import com.springboot.ecom.model.Product;
 import com.springboot.ecom.model.Seller;
 import com.springboot.ecom.model.User;
-import com.springboot.ecom.repository.ExecutiveRepository;
-import com.springboot.ecom.repository.SellerMapper;
-import com.springboot.ecom.repository.SellerRepository;
-import com.springboot.ecom.repository.UserRepository;
+import com.springboot.ecom.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +21,7 @@ public class SellerService {
     private final ExecutiveRepository executiveRepository;
     private final SellerRepository sellerRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     public void addSellerByExecutive(long executiveId, SellerDto sellerDto) {
         Seller seller = SellerMapper.mapSellerDtoToEntity(sellerDto);
@@ -34,4 +35,25 @@ public class SellerService {
         sellerRepository.save(seller);
 
     }
+
+    public void deActivateSeller(String username) {
+        //step1 : get the seller seller(username) in User table,if not username found send resourse not found exception
+         User user=userRepository.getSellerByUserName(username)
+                 .orElseThrow(()->new RuntimeException("Seller username invalid"));
+//         Seller seller=sellerRepository.findById(sellerId)
+//                 .orElseThrow(()->new ResourseNotFoundException("Seller Id not Found"));
+
+
+
+        //step2 : deactivate the isActive using seller Id and save it back
+         user.setActive(false);
+         userRepository.save(user);
+        //step3 : update stockCount into o in the product table by patch(batch) method
+        List<Product> list=productRepository.getProductsBySellerId(user.getId());
+         list
+                 .stream()
+                 .peek((p)->p.setStockCount(0))
+                 .toList();
+         productRepository.saveAll(list);
+        }
 }

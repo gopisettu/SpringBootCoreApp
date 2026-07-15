@@ -32,4 +32,10 @@ WHERE s.id = ?1
 GROUP BY s.name
 """)
     ProductCountResDto getProductBySeller(int sellerId);
+
+    @Query("""
+
+Select p from Product p where p.seller.id=?1
+""")
+    List<Product> getProductsBySellerId(long id);
 }
