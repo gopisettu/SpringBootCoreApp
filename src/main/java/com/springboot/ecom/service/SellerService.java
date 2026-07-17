@@ -25,6 +25,7 @@ public class SellerService {
     private final ProductRepository productRepository;
     private final PasswordEncoder passwordEncoder;
 
+
     public void addSellerByExecutive(String executiveName, SellerDto sellerDto) {
         Seller seller = SellerMapper.mapSellerDtoToEntity(sellerDto);
 //Encoding Password
@@ -38,15 +39,15 @@ public class SellerService {
 
     }
 
-    public void deActivateSeller(String username) {
+    public void deActivateSeller(String username,String executiveUsername) {
         //step1 : get the seller seller(username) in User table,if not username found send resourse not found exception
          User user=userRepository.getSellerByUserName(username)
                  .orElseThrow(()->new RuntimeException("Seller username invalid"));
 //         Seller seller=sellerRepository.findById(sellerId)
 //                 .orElseThrow(()->new ResourseNotFoundException("Seller Id not Found"));
 
-
-
+Executive executive=executiveRepository.findByUserUsername(executiveUsername)
+        .orElseThrow(()->new ResourseNotFoundException("Executive Not Found"));
         //step2 : deactivate the isActive using seller Id and save it back
          user.setActive(false);
          userRepository.save(user);

@@ -35,9 +35,10 @@ public class SellerController {
         String executiveName = principal.getName();
         sellerService.addSellerByExecutive(executiveName, sellerDto);
     }
-    @DeleteMapping("/de-activateSeller")
-    public void deActivateSeller(Principal principal){
-        String username= principal.getName();
-        sellerService.deActivateSeller(username);
+    @DeleteMapping("/de-activateSeller/{sellerUsername}")
+    public void deActivateSellerByExecutive(Principal principal,@PathVariable String sellerUsername){
+
+        String executive= principal.getName();
+        sellerService.deActivateSeller(sellerUsername,executive);
     }
 }

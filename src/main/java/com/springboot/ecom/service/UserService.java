@@ -2,6 +2,7 @@ package com.springboot.ecom.service;
 
 import com.springboot.ecom.dto.AdminDto;
 import com.springboot.ecom.enums.Role;
+import com.springboot.ecom.exception.InvalidCredentialsException;
 import com.springboot.ecom.model.User;
 import com.springboot.ecom.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,9 @@ public class UserService {
         userRepository.save(user);
 
     }
+    public User getUserDetails(String loggedInUsername) {
+        return userRepository.loadUserByUsername(loggedInUsername)
+                .orElseThrow(()-> new InvalidCredentialsException("Login Denied"));
+    }
+
 }

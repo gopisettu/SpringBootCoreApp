@@ -21,7 +21,7 @@ public class Seller {
     @JoinColumn(name="user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name="executive_id",nullable = false)
+    @JoinColumn(name="executive_id",nullable = true)
     private Executive excecutive;
 
 }
