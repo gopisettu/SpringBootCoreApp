@@ -2,6 +2,7 @@ package com.springboot.ecom.config;
 
 import com.springboot.ecom.service.MyUserAuthenticationService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,44 +19,21 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@AllArgsConstructor
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurityConfig {
+
     private final MyUserAuthenticationService myUserAuthenticationService;
-    private final JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain securedFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf((c)->c.disable())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authorize -> authorize
-//                        Public read-only product catalog
-                                .requestMatchers(HttpMethod.GET, "/api/product/get-category/pageable/{categoryId}").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/product/getProdutCountBySeller/{sellerId}").hasAuthority("SELLER")
-                                .requestMatchers(HttpMethod.GET, "/api/product/get-ByTitle").permitAll()
-
-//                        Public self-registration
-                                .requestMatchers(HttpMethod.POST, "/api/customer/add").hasAuthority("ADMIN")
-
-//                                .requestMatchers(HttpMethod.POST, "/api/admin/add").permitAll()
-
-//                        Admin/Executive account & seller management
-                                .requestMatchers(HttpMethod.POST, "/api/executive/insert/executiveUser").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/executive/insert/executiveUser/prof").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/executive/get-ByJobTitle").hasAnyAuthority("ADMIN", "EXECUTIVE")
-                                .requestMatchers(HttpMethod.POST, "/api/seller/insertSellerByExecutive").hasAnyAuthority("ADMIN", "EXECUTIVE")
-                                .requestMatchers(HttpMethod.DELETE, "/de-activateSeller/{sellerUsername}").hasAuthority("EXECUTIVE")
-
-//                        Product writes
-                                .requestMatchers(HttpMethod.POST, "/api/product/add/{sellerId}/{categoryId}").hasAnyAuthority("ADMIN", "EXECUTIVE", "SELLER")
-
-//                        Customer management (self-service + staff)
-                                .requestMatchers(HttpMethod.GET, "/api/customer/purchase/by-customer").permitAll()
-                                .requestMatchers("/api/customer/**").hasAnyAuthority("ADMIN", "EXECUTIVE")
-                                .requestMatchers("/api/auth/login").authenticated()
-//
-                                .anyRequest().authenticated()
-
+                .csrf(csrf -> csrf.disable())
+                .authenticationProvider(authenticationProvider())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/admin/add").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
@@ -62,16 +41,18 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public AuthenticationProvider authenticationProvider() {
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+
+        provider.setUserDetailsService(myUserAuthenticationService);
+        provider.setPasswordEncoder(passwordEncoder());
+
+        return provider;
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider daoProvider=new DaoAuthenticationProvider();
-        daoProvider.setUserDetailsService(myUserAuthenticationService);
-
-        daoProvider.setPasswordEncoder(passwordEncoder());
-        return daoProvider;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

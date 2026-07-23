@@ -31,7 +31,8 @@ public class CustomerService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public Customer add(CustomerDto dto) {
+
+    public CustomeResDto add(CustomerDto dto) {
         User user=new User();
         user.setUsername(dto.username());
         user.setRole(Role.CUSTOMER);
@@ -41,7 +42,11 @@ userRepository.save(user);
 
         Customer customer=customerMapper.getMapCustomerDto(dto);
         customer.setUser(user);
-        return  customerRepository.save(customer);
+        customerRepository.save(customer);
+
+        CustomeResDto customerResDto =customerMapper.mapEntityToDto(customer);
+        return customerResDto;
+
     }
 
     public List<CustomeResDto> getAll(int page,int size) {

@@ -40,7 +40,7 @@ public class CustomerController {
     //@RequiredArgsConstructor
 
     @PostMapping("/add")
-    public Customer add( @Valid @RequestBody CustomerDto dto){
+    public CustomeResDto add( @Valid @RequestBody CustomerDto dto){
         return customerService.add(dto);
 
     }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +40,17 @@ public class CustomerServiceTest {
     private CustomerRepository customerRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private CustomerMapper customerMapper;
     private Customer customer1;
     private Customer customer2;
     private Customer customer3;
     private User user1;
     private User user2;
     private User user3;
+
     @BeforeEach
     public  void init(){
         user1 = new User(1L,true,"hari@gmail.com","hari@123",Role.ADMIN);
@@ -114,6 +121,34 @@ public class CustomerServiceTest {
         Assertions.assertEquals("Customer Id not found", exception.getMessage());
 
         verify(customerRepository, times(1)).findById(11L);
+    }
+
+    @Test
+    public  void addTest(){
+        user1.setPassword("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user1);
+        when(customerRepository.save(any(Customer.class))).thenReturn((customer1));
+
+        when(passwordEncoder.encode("hari@123")).thenReturn("encodedPassword");
+        CustomerDto customerDto = new CustomerDto(
+                "Hari Krishnan",
+                "Thirupur",
+                "hari@gmail.com",
+                "hari@123"
+        );
+        customerService.add(customerDto);
+        ArgumentCaptor<Customer> customerCaptor =  ArgumentCaptor.forClass(Customer.class);
+
+
+        verify(customerRepository, times(1)).save(customerCaptor.capture());
+   Assertions.assertEquals(customerDto.city(),customerCaptor.getValue().getCity());
+   Assertions.assertEquals(customerDto.name(),customerCaptor.getValue().getName());
+
+
+
+
+
+
     }
 
 }
